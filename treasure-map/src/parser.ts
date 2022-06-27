@@ -1,25 +1,27 @@
 import fs from "fs";
 import path from "path";
 
-function isLineValid(line: string) {
-  return line !== "" && line[0] !== "#";
-}
+export class Parser {
+  public splitFile(fileContent: string) {
+    const lineList: string[] = [];
 
-export function splitFile(fileContent: string) {
-  const lineList: string[] = [];
+    fileContent.split(/\r?\n/).forEach((line) => {
+      if (this.isLineValid(line)) {
+        lineList.push(line);
+      }
+    });
 
-  fileContent.split(/\r?\n/).forEach((line) => {
-    if (isLineValid(line)) {
-      lineList.push(line);
-    }
-  });
+    return lineList;
+  }
 
-  return lineList;
-}
+  private isLineValid(line: string) {
+    return line !== "" && line[0] !== "#";
+  }
 
-export function readTextFile(filePath: string) {
-  const myPath = path.join(__dirname, filePath);
-  const fileContent = fs.readFileSync(myPath).toString();
+  public readTextFile(filePath: string) {
+    const myPath = path.join(__dirname, filePath);
+    const fileContent = fs.readFileSync(myPath).toString();
 
-  return fileContent;
+    return fileContent;
+  }
 }
