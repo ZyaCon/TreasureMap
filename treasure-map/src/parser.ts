@@ -35,12 +35,13 @@ export class Parser {
 
   public createMap(lineList: string[]) {
     const emptyMap = this.initMap(lineList);
-    let filledMap = this.fillMap(emptyMap, lineList);
-    filledMap = this.fillMap(filledMap, lineList);
+    const filledMap = this.fillMap(emptyMap, lineList);
+
+    return filledMap;
     //adventurer
   }
 
-  initMap(lineList: string[]) {
+  private initMap(lineList: string[]) {
     const mapLine = lineList.find((line) => line[0] === "C");
 
     if (!mapLine) {
@@ -56,24 +57,19 @@ export class Parser {
     return map;
   }
 
-  public fillMap(emptyMap: string[][], lineList: string[]) {
-    const montainLine = lineList.filter((line) => line[0] === "M");
+  private fillMap(emptyMap: string[][], lineList: string[]) {
     const map = emptyMap;
 
+    const montainLine = lineList.filter((line) => line[0] === "M");
     montainLine.forEach(([token, x, y]) => {
       map[+y][+x] = token;
     });
 
     const treasureLine = lineList.filter((line) => line[0] === "T");
-
     treasureLine.forEach(([, x, y, nb]) => {
-      map[+y][+x] = nb;
+      map[+y][+x] = `T(${nb})`;
     });
 
-    console.log(
-      "🚀 ~ file: parser.ts ~ line 66 ~ Parser ~ montainLine.forEach ~ map",
-      map
-    );
     return map;
   }
 }
