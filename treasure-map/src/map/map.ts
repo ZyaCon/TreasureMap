@@ -72,7 +72,7 @@ export class Map {
     const steps = sequence.length;
 
     for (let i = 0; i < steps; i++) {
-      console.log("🚀sequence[i]🚀", sequence[i]);
+      console.log("🚀sequence[i]", sequence[i]);
       switch (sequence[i]) {
         case "A":
           this.forward();
@@ -88,34 +88,27 @@ export class Map {
           break;
       }
       this.map[this.a.adventurer.y][this.a.adventurer.x] = "A";
-      console.log("🚀 ~ adventurer", this.a.adventurer);
+      console.log("🚀adventurer", this.a.adventurer);
     }
     return this.map;
   }
 
   private forward() {
-    const position = { y: this.a.adventurer.y, x: this.a.adventurer.x };
-
     switch (this.a.adventurer.orientation) {
       case "N":
-        this.checkObstacle(position.x, position.y - 1);
-        this.map[this.a.adventurer.y][this.a.adventurer.x] = ".";
-        this.a.adventurer.y = this.a.adventurer.y - 1;
+        this.checkPath(this.a.adventurer.x, this.a.adventurer.y - 1);
 
         break;
       case "E":
-        this.map[this.a.adventurer.y][this.a.adventurer.x] = ".";
-        this.a.adventurer.x = this.a.adventurer.x + 1;
+        this.checkPath(this.a.adventurer.x + 1, this.a.adventurer.y);
 
         break;
       case "S":
-        this.map[this.a.adventurer.y][this.a.adventurer.x] = ".";
-        this.a.adventurer.y = this.a.adventurer.y + 1;
+        this.checkPath(this.a.adventurer.x, this.a.adventurer.y + 1);
 
         break;
       case "W":
-        this.map[this.a.adventurer.y][this.a.adventurer.x] = ".";
-        this.a.adventurer.x = this.a.adventurer.x - 1;
+        this.checkPath(this.a.adventurer.x - 1, this.a.adventurer.y);
 
         break;
 
@@ -125,14 +118,10 @@ export class Map {
 
     return;
   }
-  private checkObstacle(y: number, x: number) {
+  private checkPath(x: number, y: number) {
     if (this.map[y][x] === "M") {
+      console.log("_____MONTAIN______");
       return;
-    }
-
-    if (this.map[y][x] === ".") {
-      this.a.adventurer.y = y;
-      this.a.adventurer.x = x;
     }
 
     if (this.map[y][x].includes("T")) {
@@ -141,10 +130,17 @@ export class Map {
         this.map[y][x].lastIndexOf(")")
       ) as unknown as number;
 
+      console.log(`_____TREASURE WITH ${treasureNumber}______`);
       if (treasureNumber) {
         this.a.adventurer.treasure += 1;
         this.map[y][x] = treasureNumber ? `T(${treasureNumber - 1})` : ".";
       }
+    }
+
+    if (this.map[y][x] === "." || this.map[y][x].includes("T")) {
+      this.map[this.a.adventurer.y][this.a.adventurer.x] = ".";
+      this.a.adventurer.y = y;
+      this.a.adventurer.x = x;
     }
   }
 
