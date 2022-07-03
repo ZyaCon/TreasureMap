@@ -1,15 +1,28 @@
-export enum Orientation {
-  NORTH = "N",
-  EAST = "E",
-  SOUTH = "S",
-  WEST = "W",
-}
+// export enum Orientation {
+//   NORTH,
+//   EAST,
+//   SOUTH,
+//   WEST,
+// }
+
+export const ori = ["N", "E", "S", "W"];
 
 export interface Adventurer {
   token: string;
   name: string;
   x: number;
   y: number;
-  orientation: Orientation;
+  orientation: string;
   sequence: string;
+}
+
+export class A {
+  public adventurer: Adventurer = {
+    token: "",
+    name: "",
+    x: 0,
+    y: 0,
+    orientation: "N",
+    sequence: "",
+  };
 }
