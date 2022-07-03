@@ -1,4 +1,4 @@
-import { Adventurer, Orientation } from "../adventurer/adventurer";
+import { A, ori } from "../adventurer/adventurer";
 
 enum MapToken {
   MONTAIN = "M",
@@ -8,6 +8,7 @@ enum MapToken {
 
 export class Map {
   private map: string[][] = [];
+  private a = new A();
 
   public createMap(lineList: string[]) {
     this.map = this.initMap(lineList);
@@ -50,16 +51,103 @@ export class Map {
     } else if (token === MapToken.TREASURE) {
       this.map[+lineData[2]][+lineData[1]] = `T(${lineData[3]})`;
     } else if (token === MapToken.ADVENTURER) {
-      const A: Adventurer = {
+      this.a.adventurer = {
         token: lineData[0],
         name: lineData[1],
         x: +lineData[2],
         y: +lineData[3],
-        orientation: lineData[4] as Orientation,
+        orientation: lineData[4],
         sequence: lineData[5],
       };
 
-      this.map[A.y][A.x] = A.token;
+      this.map[this.a.adventurer.y][this.a.adventurer.x] =
+        this.a.adventurer.token;
+    }
+  }
+
+  public play(currentMap: string[][]) {
+    this.map = currentMap;
+    const sequence = this.a.adventurer.sequence;
+    const steps = sequence.length;
+
+    for (let i = 0; i < steps; i++) {
+      console.log("🚀sequence[i]🚀", sequence[i]);
+      switch (sequence[i]) {
+        case "A":
+          this.forward();
+          break;
+        case "D":
+          this.turn("D");
+          break;
+        case "G":
+          this.turn("G");
+          break;
+
+        default:
+          break;
+      }
+      this.map[this.a.adventurer.y][this.a.adventurer.x] = "A";
+      console.log("🚀 ~ adventurer", this.a.adventurer);
+    }
+    return this.map;
+  }
+
+  private forward() {
+    switch (this.a.adventurer.orientation) {
+      case "N":
+        this.map[this.a.adventurer.y][this.a.adventurer.x] = ".";
+        this.a.adventurer.y = this.a.adventurer.y - 1;
+
+        break;
+      case "E":
+        this.map[this.a.adventurer.y][this.a.adventurer.x] = ".";
+        this.a.adventurer.x = this.a.adventurer.x + 1;
+
+        break;
+      case "S":
+        this.map[this.a.adventurer.y][this.a.adventurer.x] = ".";
+        this.a.adventurer.y = this.a.adventurer.y + 1;
+
+        break;
+      case "W":
+        this.map[this.a.adventurer.y][this.a.adventurer.x] = ".";
+        this.a.adventurer.x = this.a.adventurer.x - 1;
+
+        break;
+
+      default:
+        break;
+    }
+
+    return;
+  }
+
+  private turn(orientation: string) {
+    const indexFromOrientation = ori.findIndex((e) => {
+      return e === this.a.adventurer.orientation;
+    });
+
+    const orientationLimit = ori.length - 1;
+
+    switch (orientation) {
+      case "D":
+        if (this.a.adventurer.orientation === ori[orientationLimit]) {
+          this.a.adventurer.orientation = ori[0];
+        } else {
+          this.a.adventurer.orientation = ori[indexFromOrientation + 1];
+        }
+        break;
+
+      case "G":
+        if (this.a.adventurer.orientation === ori[0]) {
+          this.a.adventurer.orientation = ori[orientationLimit];
+        } else {
+          this.a.adventurer.orientation = ori[indexFromOrientation - 1];
+        }
+        break;
+
+      default:
+        break;
     }
   }
 }
