@@ -58,6 +58,7 @@ export class Map {
         y: +lineData[3],
         orientation: lineData[4],
         sequence: lineData[5],
+        treasure: 0,
       };
 
       this.map[this.a.adventurer.y][this.a.adventurer.x] =
@@ -93,8 +94,11 @@ export class Map {
   }
 
   private forward() {
+    const position = { y: this.a.adventurer.y, x: this.a.adventurer.x };
+
     switch (this.a.adventurer.orientation) {
       case "N":
+        this.checkObstacle(position.x, position.y - 1);
         this.map[this.a.adventurer.y][this.a.adventurer.x] = ".";
         this.a.adventurer.y = this.a.adventurer.y - 1;
 
@@ -120,6 +124,28 @@ export class Map {
     }
 
     return;
+  }
+  private checkObstacle(y: number, x: number) {
+    if (this.map[y][x] === "M") {
+      return;
+    }
+
+    if (this.map[y][x] === ".") {
+      this.a.adventurer.y = y;
+      this.a.adventurer.x = x;
+    }
+
+    if (this.map[y][x].includes("T")) {
+      const treasureNumber = this.map[y][x].substring(
+        this.map[y][x].indexOf("(") + 1,
+        this.map[y][x].lastIndexOf(")")
+      ) as unknown as number;
+
+      if (treasureNumber) {
+        this.a.adventurer.treasure += 1;
+        this.map[y][x] = treasureNumber ? `T(${treasureNumber - 1})` : ".";
+      }
+    }
   }
 
   private turn(orientation: string) {

@@ -14,6 +14,7 @@ export interface Adventurer {
   y: number;
   orientation: string;
   sequence: string;
+  treasure: number;
 }
 
 export class A {
@@ -24,5 +25,6 @@ export class A {
     y: 0,
     orientation: "N",
     sequence: "",
+    treasure: 0,
   };
 }
