@@ -119,29 +119,31 @@ export class Map {
     return;
   }
   private checkPath(x: number, y: number) {
-    if (this.map[y][x] === "M") {
-      console.log("_____MONTAIN______");
+    if (
+      this.map[y][x] !== "." &&
+      !this.map[y][x].includes("T") &&
+      this.map[y][x] === "M"
+    ) {
       return;
     }
 
+    let treasureNumber = 0;
+
     if (this.map[y][x].includes("T")) {
-      const treasureNumber = this.map[y][x].substring(
+      treasureNumber = this.map[y][x].substring(
         this.map[y][x].indexOf("(") + 1,
         this.map[y][x].lastIndexOf(")")
       ) as unknown as number;
 
-      console.log(`_____TREASURE WITH ${treasureNumber}______`);
-      if (treasureNumber) {
+      if (treasureNumber > 0) {
         this.a.adventurer.treasure += 1;
-        this.map[y][x] = treasureNumber ? `T(${treasureNumber - 1})` : ".";
       }
     }
 
-    if (this.map[y][x] === "." || this.map[y][x].includes("T")) {
-      this.map[this.a.adventurer.y][this.a.adventurer.x] = ".";
-      this.a.adventurer.y = y;
-      this.a.adventurer.x = x;
-    }
+    this.map[this.a.adventurer.y][this.a.adventurer.x] = this.a.lastTile;
+    this.a.adventurer.y = y;
+    this.a.adventurer.x = x;
+    this.a.lastTile = treasureNumber ? `T(${treasureNumber - 1})` : ".";
   }
 
   private turn(orientation: string) {

@@ -18,6 +18,7 @@ export interface Adventurer {
 }
 
 export class A {
+  public lastTile = ".";
   public adventurer: Adventurer = {
     token: "",
     name: "",
