@@ -1,4 +1,4 @@
-import { A } from "../adventurer/adventurer";
+import { Adventurer, defaultAdventurer } from "../adventurer/adventurer";
 
 enum MapToken {
   MONTAIN = "M",
@@ -9,8 +9,7 @@ enum MapToken {
 export type Cartography = string[][];
 
 export class MapTreasure {
-  constructor(private readonly adventurer: A) {}
-
+  private adventurer: Adventurer = defaultAdventurer;
   private map: Cartography = [];
 
   public createMap(lineList: string[]) {
@@ -54,7 +53,7 @@ export class MapTreasure {
     } else if (token === MapToken.TREASURE) {
       this.map[+lineData[2]][+lineData[1]] = `T(${lineData[3]})`;
     } else if (token === MapToken.ADVENTURER) {
-      this.adventurer.adventurer = {
+      this.adventurer = {
         token: lineData[0],
         name: lineData[1],
         x: +lineData[2],
@@ -64,8 +63,11 @@ export class MapTreasure {
         treasure: 0,
       };
 
-      this.map[this.adventurer.adventurer.y][this.adventurer.adventurer.x] =
-        this.adventurer.adventurer.token;
+      this.map[this.adventurer.y][this.adventurer.x] = this.adventurer.token;
     }
+  }
+
+  public get currentAdventurer() {
+    return this.adventurer;
   }
 }

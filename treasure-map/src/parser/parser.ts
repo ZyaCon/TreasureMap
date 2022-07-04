@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import { RunnerAdventurer } from "../runner/runner";
 
 export class Parser {
   public splitFile(fileContent: string) {
@@ -25,14 +26,44 @@ export class Parser {
     return fileContent;
   }
 
-  public writeEndingFile(map: string[][], fileName: string) {
-    const file = fs.createWriteStream(`${fileName}.txt`);
+  public writeEndingFile(
+    map: string[][],
+    lineList: string[],
+    adventurerEndState: RunnerAdventurer
+  ) {
+    const file = fs.createWriteStream("result.txt");
     file.on("error", function (err) {
-      console.error(err);
+      throw err;
     });
-    map.forEach(function (v) {
-      file.write(v.join(" ") + "\n");
+
+    let resultContent = "";
+
+    lineList.forEach((line) => {
+      if (line.includes("M")) {
+        resultContent += `${line}\n`;
+      }
     });
+
+    map.forEach((row, verticalIndex) => {
+      row.forEach((tile, horizontalIndex) => {
+        if (tile.includes("T")) {
+          const treasureNumber = tile.substring(
+            tile.indexOf("(") + 1,
+            tile.lastIndexOf(")")
+          ) as unknown as number;
+          resultContent += `T-${horizontalIndex}-${verticalIndex}-${treasureNumber}\n`;
+        }
+      });
+    });
+
+    lineList.forEach((line) => {
+      if (line.includes("A")) {
+        const { name, x, y, treasure, orientation } =
+          adventurerEndState.adventurer;
+        resultContent += `A-${name}-${x}-${y}-${orientation}-${treasure}`;
+      }
+    });
+    file.write(resultContent);
     file.end();
   }
 }

@@ -1,10 +1,3 @@
-// export enum Orientation {
-//   NORTH,
-//   EAST,
-//   SOUTH,
-//   WEST,
-// }
-
 export const ori = ["N", "E", "S", "W"];
 
 export interface Adventurer {
@@ -17,15 +10,12 @@ export interface Adventurer {
   treasure: number;
 }
 
-export class A {
-  public lastTile = ".";
-  public adventurer: Adventurer = {
-    token: "",
-    name: "",
-    x: 0,
-    y: 0,
-    orientation: "N",
-    sequence: "",
-    treasure: 0,
-  };
-}
+export const defaultAdventurer: Adventurer = {
+  token: "",
+  name: "",
+  x: 0,
+  y: 0,
+  orientation: "N",
+  sequence: "",
+  treasure: 0,
+};

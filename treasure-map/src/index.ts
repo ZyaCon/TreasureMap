@@ -1,6 +1,5 @@
 import { Parser } from "./parser/parser";
 import { MapTreasure } from "./map/map";
-import { A } from "./adventurer/adventurer";
 import { Runner } from "./runner/runner";
 
 const main = (pathArg: string) => {
@@ -8,25 +7,23 @@ const main = (pathArg: string) => {
     throw "Missing map file.";
   }
 
-  const fileName = pathArg.substring(
-    pathArg.lastIndexOf("/") + 1 || pathArg.indexOf(""),
-    pathArg.lastIndexOf(".txt")
-  );
-
   const parser = new Parser();
   const fileContent = parser.readTextFile(pathArg);
+
   const lineList = parser.splitFile(fileContent);
 
-  const adventurer = new A();
-  const mapTreasure = new MapTreasure(adventurer);
+  const mapTreasure = new MapTreasure();
   const map = mapTreasure.createMap(lineList);
-  console.log("🚀 ~ newMap", map);
+  console.log("Start Map:", map);
+  const adventurer = mapTreasure.currentAdventurer;
 
-  const runner = new Runner(map, adventurer);
+  const runner = new Runner(map, { adventurer, lastTile: "." });
   runner.run();
+
+  const adventurerEndState = runner.adventurerEndState;
   const endMap = runner.endMap;
-  console.log("FINAL MAP", endMap);
-  parser.writeEndingFile(endMap, fileName);
+  console.log("Final Map:", endMap);
+  parser.writeEndingFile(endMap, lineList, adventurerEndState);
 
   return;
 };

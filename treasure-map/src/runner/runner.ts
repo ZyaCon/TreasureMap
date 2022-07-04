@@ -1,10 +1,15 @@
 import { Cartography } from "../map/map";
-import { A, ori } from "../adventurer/adventurer";
+import { Adventurer, ori } from "../adventurer/adventurer";
+
+export interface RunnerAdventurer {
+  adventurer: Adventurer;
+  lastTile: string;
+}
 
 export class Runner {
   constructor(
     private readonly map: Cartography,
-    private readonly adventurer: A
+    private readonly adventurer: RunnerAdventurer
   ) {}
 
   public run() {
@@ -12,7 +17,6 @@ export class Runner {
     const steps = sequence.length;
 
     for (let i = 0; i < steps; i++) {
-      console.log("🚀sequence[i]", sequence[i]);
       switch (sequence[i]) {
         case "A":
           this.forward();
@@ -29,7 +33,6 @@ export class Runner {
       }
       this.map[this.adventurer.adventurer.y][this.adventurer.adventurer.x] =
         "A";
-      console.log("🚀adventurer", this.adventurer.adventurer);
     }
     return this.map;
   }
@@ -135,5 +138,9 @@ export class Runner {
 
   public get endMap() {
     return this.map;
+  }
+
+  public get adventurerEndState() {
+    return this.adventurer;
   }
 }
