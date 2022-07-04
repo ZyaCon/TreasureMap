@@ -1,4 +1,4 @@
-import { A, ori } from "../adventurer/adventurer";
+import { A } from "../adventurer/adventurer";
 
 enum MapToken {
   MONTAIN = "M",
@@ -6,9 +6,12 @@ enum MapToken {
   ADVENTURER = "A",
 }
 
-export class Map {
-  private map: string[][] = [];
-  private a = new A();
+export type Cartography = string[][];
+
+export class MapTreasure {
+  constructor(private readonly adventurer: A) {}
+
+  private map: Cartography = [];
 
   public createMap(lineList: string[]) {
     this.map = this.initMap(lineList);
@@ -51,7 +54,7 @@ export class Map {
     } else if (token === MapToken.TREASURE) {
       this.map[+lineData[2]][+lineData[1]] = `T(${lineData[3]})`;
     } else if (token === MapToken.ADVENTURER) {
-      this.a.adventurer = {
+      this.adventurer.adventurer = {
         token: lineData[0],
         name: lineData[1],
         x: +lineData[2],
@@ -61,117 +64,8 @@ export class Map {
         treasure: 0,
       };
 
-      this.map[this.a.adventurer.y][this.a.adventurer.x] =
-        this.a.adventurer.token;
-    }
-  }
-
-  public play(currentMap: string[][]) {
-    this.map = currentMap;
-    const sequence = this.a.adventurer.sequence;
-    const steps = sequence.length;
-
-    for (let i = 0; i < steps; i++) {
-      console.log("🚀sequence[i]", sequence[i]);
-      switch (sequence[i]) {
-        case "A":
-          this.forward();
-          break;
-        case "D":
-          this.turn("D");
-          break;
-        case "G":
-          this.turn("G");
-          break;
-
-        default:
-          break;
-      }
-      this.map[this.a.adventurer.y][this.a.adventurer.x] = "A";
-      console.log("🚀adventurer", this.a.adventurer);
-    }
-    return this.map;
-  }
-
-  private forward() {
-    switch (this.a.adventurer.orientation) {
-      case "N":
-        this.checkPath(this.a.adventurer.x, this.a.adventurer.y - 1);
-
-        break;
-      case "E":
-        this.checkPath(this.a.adventurer.x + 1, this.a.adventurer.y);
-
-        break;
-      case "S":
-        this.checkPath(this.a.adventurer.x, this.a.adventurer.y + 1);
-
-        break;
-      case "W":
-        this.checkPath(this.a.adventurer.x - 1, this.a.adventurer.y);
-
-        break;
-
-      default:
-        break;
-    }
-
-    return;
-  }
-  private checkPath(x: number, y: number) {
-    if (
-      this.map[y][x] !== "." &&
-      !this.map[y][x].includes("T") &&
-      this.map[y][x] === "M"
-    ) {
-      return;
-    }
-
-    let treasureNumber = 0;
-
-    if (this.map[y][x].includes("T")) {
-      treasureNumber = this.map[y][x].substring(
-        this.map[y][x].indexOf("(") + 1,
-        this.map[y][x].lastIndexOf(")")
-      ) as unknown as number;
-
-      if (treasureNumber > 0) {
-        this.a.adventurer.treasure += 1;
-      }
-    }
-
-    this.map[this.a.adventurer.y][this.a.adventurer.x] = this.a.lastTile;
-    this.a.adventurer.y = y;
-    this.a.adventurer.x = x;
-    this.a.lastTile = treasureNumber ? `T(${treasureNumber - 1})` : ".";
-  }
-
-  private turn(orientation: string) {
-    const indexFromOrientation = ori.findIndex((e) => {
-      return e === this.a.adventurer.orientation;
-    });
-
-    const orientationLimit = ori.length - 1;
-
-    switch (orientation) {
-      case "D":
-        if (this.a.adventurer.orientation === ori[orientationLimit]) {
-          this.a.adventurer.orientation = ori[0];
-        } else {
-          this.a.adventurer.orientation = ori[indexFromOrientation + 1];
-        }
-        break;
-
-      case "G":
-        if (this.a.adventurer.orientation === ori[0]) {
-          this.a.adventurer.orientation = ori[orientationLimit];
-        } else {
-          this.a.adventurer.orientation = ori[indexFromOrientation - 1];
-        }
-        break;
-
-      default:
-        break;
+      this.map[this.adventurer.adventurer.y][this.adventurer.adventurer.x] =
+        this.adventurer.adventurer.token;
     }
   }
 }

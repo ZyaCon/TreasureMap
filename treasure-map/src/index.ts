@@ -1,5 +1,7 @@
 import { Parser } from "./parser/parser";
-import { Map } from "./map/map";
+import { MapTreasure } from "./map/map";
+import { A } from "./adventurer/adventurer";
+import { Runner } from "./runner/runner";
 
 const main = (pathArg: string) => {
   if (!pathArg) {
@@ -12,15 +14,17 @@ const main = (pathArg: string) => {
   );
 
   const parser = new Parser();
-  const map = new Map();
-
   const fileContent = parser.readTextFile(pathArg);
   const lineList = parser.splitFile(fileContent);
 
-  const newMap = map.createMap(lineList);
-  console.log("🚀 ~ newMap", newMap);
+  const adventurer = new A();
+  const mapTreasure = new MapTreasure(adventurer);
+  const map = mapTreasure.createMap(lineList);
+  console.log("🚀 ~ newMap", map);
 
-  const endMap = map.play(newMap);
+  const runner = new Runner(map, adventurer);
+  runner.run();
+  const endMap = runner.endMap;
   console.log("FINAL MAP", endMap);
   parser.writeEndingFile(endMap, fileName);
 
